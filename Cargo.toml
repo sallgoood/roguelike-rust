@@ -1,5 +1,5 @@
 [package]
-name = "roguelike"
+name = "roguelike-rust"
 version = "0.1.0"
 authors = ["SallGood <32182117+sallgoood@users.noreply.github.com>"]
 edition = "2018"
