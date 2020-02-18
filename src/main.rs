@@ -1,7 +1,10 @@
-use tcod::{BackgroundFlag, Console, FontLayout};
+use tcod::{Console, FontLayout};
 use tcod::colors::*;
 use tcod::console::*;
-use tcod::input::Key;
+
+use objects::Object;
+
+mod objects;
 
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
@@ -13,7 +16,7 @@ struct Tcod {
     con: Offscreen,
 }
 
-fn handle_keys(tcod: &mut Tcod, player_x: &mut i32, player_y: &mut i32) -> bool {
+fn handle_keys(tcod: &mut Tcod, player: &mut Object) -> bool {
     use tcod::input::Key;
     use tcod::input::KeyCode::*;
 
@@ -31,10 +34,10 @@ fn handle_keys(tcod: &mut Tcod, player_x: &mut i32, player_y: &mut i32) -> bool 
         Key { code: Escape, .. } => return true, // exit game
 
         // movement keys
-        Key { code: Up, .. } => *player_y -= 1,
-        Key { code: Down, .. } => *player_y += 1,
-        Key { code: Left, .. } => *player_x -= 1,
-        Key { code: Right, .. } => *player_x += 1,
+        Key { code: Up, .. } => player.move_by(0, -1),
+        Key { code: Down, .. } => player.move_by(0, 1),
+        Key { code: Left, .. } => player.move_by(-1, 0),
+        Key { code: Right, .. } => player.move_by(1, 0),
 
         _ => {}
     }
@@ -53,18 +56,16 @@ fn main() {
         .init();
 
     let con = Offscreen::new(SCREEN_WIDTH, SCREEN_HEIGHT);
-
     let mut tcod = Tcod { root, con };
-
-    let mut player_x = SCREEN_WIDTH / 2;
-    let mut player_y = SCREEN_HEIGHT / 2;
-
-
+    let player = Object::new(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, '@', WHITE);
+    let npc = Object::new(SCREEN_WIDTH / 2 - 5, SCREEN_HEIGHT / 2, '@', YELLOW);
+    let mut objects = [player, npc];
     //Since we’ve set the FPS limit, this loop will be executed 20 times a second
     while !tcod.root.window_closed() {
-        tcod.con.set_default_foreground(WHITE);
         tcod.con.clear();
-        tcod.con.put_char(player_x, player_y, '@', BackgroundFlag::None);
+        for object in &objects {
+            object.draw(&mut tcod.con);
+        }
         blit(
             &tcod.con,
             (0, 0),
@@ -75,7 +76,8 @@ fn main() {
             1.0,
         );
         tcod.root.flush();
-        let exit = handle_keys(&mut tcod, &mut player_x, &mut player_y);
+        let player = &mut objects[0];
+        let exit = handle_keys(&mut tcod, player);
         if exit {
             break;
         }
