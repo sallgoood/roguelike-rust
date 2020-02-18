@@ -2,9 +2,9 @@ use tcod::{Console, FontLayout};
 use tcod::colors::*;
 use tcod::console::*;
 
-use objects::Object;
+use object::Object;
 
-mod objects;
+mod object;
 
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
