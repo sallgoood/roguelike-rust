@@ -20,7 +20,6 @@ impl Object {
     }
 
     pub fn draw(&self, con: &mut dyn Console) {
-        println!("wtf");
         con.set_default_foreground(self.color);
         con.put_char(self.x, self.y, self.char, BackgroundFlag::None);
     }
