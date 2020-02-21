@@ -1,3 +1,4 @@
+use crate::Game;
 use tcod::colors::*;
 use tcod::console::*;
 
@@ -14,9 +15,12 @@ impl Object {
         Object { x, y, char, color }
     }
 
-    pub fn move_by(&mut self, dx: i32, dy: i32) {
-        self.x += dx;
-        self.y += dy;
+    pub fn move_by(&mut self, dx: i32, dy: i32, game: &Game) {
+        //TODO bug when out of map
+        if !game.map[(self.x + dx) as usize][(self.y + dy) as usize].blocked {
+            self.x += dx;
+            self.y += dy;
+        }
     }
 
     pub fn draw(&self, con: &mut dyn Console) {
